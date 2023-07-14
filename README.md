@@ -55,7 +55,7 @@ By default it will add the `BufWritePre` and `BufWritePost` autocommands and the
 `FormatOn` and `FormatOff` user commands. If you prefer to avoid it and define
 your own you can disable it:
 
-```
+```lua
 require('format-on-save').setup({
   auto_commands = false,
   user_commands = false,
@@ -64,12 +64,12 @@ require('format-on-save').setup({
 
 To trigger the format call:
 
-```
+```lua
 require('format-on-save').format()
 ```
 
 To restore the cursor positions after the format:
 
-```
+```lua
 require('format-on-save').restore_cursors()
 ```
