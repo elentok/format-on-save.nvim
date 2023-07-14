@@ -1,8 +1,11 @@
 # format-on-save.nvim
 
-Automatically formats files when saving using either LSP or shell utilities like prettierd or eslint_d
+Automatically formats files when saving using either LSP or shell utilities like prettierd or shfmt.
 
-This is a work in progress and the API might change.
+It also restores the cursor of any window showing the current file (useful when
+editing the same file in a split).
+
+NOTE: This is a work in progress and the API might change.
 
 ## Installation
 
