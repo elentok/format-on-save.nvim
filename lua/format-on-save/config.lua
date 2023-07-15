@@ -1,5 +1,6 @@
 ---@class ShellFormatterOptions
 ---@field cmd string|string[]
+---@field tempfile? "random"|fun(): string Instead of passing the buffer through stdin write to a temp file and the shell command will modify it
 
 ---@class ShellFormatter: ShellFormatterOptions
 ---@field mode "shell"

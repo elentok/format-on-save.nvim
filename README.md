@@ -39,7 +39,7 @@ This plugin has a few core principles to keep it simple:
       too big (add a :ForceFormat command and notify the user why formatting was
       skipped)
 - [x] Use vim.notify to show error messages
-- [ ] Support formatters that don't work with stdin by writing to a temp file
+- [x] Support formatters that don't work with stdin by writing to a temp file
       first
 - [ ] Add LSP timeout to configuration
 - [ ] Shell formatter - when the result is the same as the input don't modify
@@ -54,6 +54,11 @@ There are currently 3 types of formatters:
   that support formatting.
 - **ShellFormatter** - passes the current buffer via stdin to a shell program (like `prettierd`
   or `shfmt`) and replaces the buffer's contents with the result.
+  - For formatters that don't support stdin you can pass a `tempfile` field
+    which can be either `"random"` (uses `vim.fn.tempname()`) or a function that
+    returns a string to be used as the tempfile and then the plugin will write the
+    buffer to this file, run the command on it (the "%" value will be expanded to
+    the tempfile) and read it back and fill in the buffer).
 - **CustomFormatter** - passes the lines of the current buffer through a
   function that modifies them and then updates the contents.
 - **LazyFormatter** - a function that is called lazily every time we format the
@@ -125,6 +130,17 @@ format_on_save.setup({
       formatters.remove_trailing_whitespace,
       formatters.shell({ cmd = "tidy-imports" }),
       formatters.black,
+    },
+
+    -- Use a tempfile instead of stdin
+    go = {
+      formatters.shell({
+        cmd = { "goimports-reviser", "-rm-unused", "-set-alias", "-format", "%" },
+        tempfile = function()
+          return vim.fn.expand("%") .. '.formatter-temp'
+        end
+      }),
+      formatters.shell({ cmd = { "gofmt" } }),
     },
   },
 })

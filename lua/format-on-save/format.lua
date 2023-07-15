@@ -18,15 +18,21 @@ end
 -- When the command is an array, first expand "%" array items to the full file
 -- path and then concat to a single string.
 ---@param cmd string|string[]
+---@param tempfile? string If defined this value is used to expand the "%" value
 ---@return string
-local function expand_and_concat_cmd(cmd)
+local function expand_and_concat_cmd(cmd, tempfile)
   if type(cmd) == "string" then
     return cmd
   end
 
+  local filename = tempfile
+  if filename == nil then
+    filename = vim.fn.expand("%")
+  end
+
   for index, value in ipairs(cmd) do
     if value == "%" then
-      cmd[index] = vim.fn.shellescape(vim.fn.expand(value))
+      cmd[index] = vim.fn.shellescape(filename)
     end
   end
 
@@ -45,10 +51,34 @@ local function format_with_lsp(client_name)
   vim.lsp.buf.format({ timeout_ms = 4000, filter = filter })
 end
 
----@param cmd string|string[]
-local function format_with_cmd(cmd)
-  cmd = expand_and_concat_cmd(cmd) -- .. " 2>&1"
+---@param opts ShellFormatter
+local function prepare_tempfile(opts)
+  if opts.tempfile == nil then
+    return nil
+  end
+
+  if opts.tempfile == "random" then
+    local tempfile = vim.fn.tempname()
+    local ext = vim.fn.expand("%:e")
+    if #ext ~= 0 then
+      tempfile = tempfile .. '.' .. ext
+    end
+    return tempfile
+  end
+
+  return opts.tempfile()
+end
+
+---@param opts ShellFormatter
+local function format_with_shell(opts)
+  local tempfile = prepare_tempfile(opts)
+
+  local cmd = expand_and_concat_cmd(opts.cmd, tempfile)
   local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
+
+  if tempfile ~= nil then
+    vim.fn.writefile(lines, tempfile)
+  end
 
   local result = systemlist(cmd, lines)
   if result.exitcode ~= 0 then
@@ -64,7 +94,13 @@ local function format_with_cmd(cmd)
     vim.notify(message, config.stderr_loglevel, { title = "Formatter warning" })
   end
 
-  vim.api.nvim_buf_set_lines(0, 0, -1, false, result.stdout)
+  local formatted_lines = result.stdout
+  if tempfile ~= nil then
+    formatted_lines = vim.fn.readfile(tempfile)
+    os.remove(tempfile)
+  end
+
+  vim.api.nvim_buf_set_lines(0, 0, -1, false, formatted_lines)
 end
 
 -- Formats the current buffer with a formatter function
@@ -108,7 +144,7 @@ local function format()
     if single_formatter.mode == "lsp" then
       format_with_lsp(single_formatter.client_name)
     elseif single_formatter.mode == "shell" then
-      format_with_cmd(single_formatter.cmd)
+      format_with_shell(single_formatter --[[@as ShellFormatter]])
     elseif single_formatter.mode == "custom" then
       format_with_custom(single_formatter --[[@as CustomFormatter]])
     else
