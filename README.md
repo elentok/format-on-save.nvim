@@ -7,6 +7,20 @@ editing the same file in a split).
 
 NOTE: This is a work in progress and the API might change.
 
+## TODO
+
+- [ ] Add LazyFormatter - a function that is only called while formatting and
+      returns a formatter
+- [ ] Add CustomFormatter - a function that gets an array of lines and returns
+      a new array of lines
+- [ ] Support concatenating formatters
+- [ ] File size limit / Line count limit - to avoid hanging on files that are
+      too big (add a :ForceFormat command and notify the user why formatting was
+      skipped)
+- [ ] Use vim.notify to show error messages
+- [ ] Support formatters that don't work with stdin by writing to a temp file
+      first
+
 ## Installation
 
 Add the following to your package manager:
