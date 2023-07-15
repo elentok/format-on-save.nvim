@@ -86,14 +86,24 @@ local function format()
     formatter = formatter()
   end
 
-  if formatter.mode == "lsp" then
-    format_with_lsp(formatter.client_name)
-  elseif formatter.mode == "shell" then
-    format_with_cmd(formatter.cmd)
-  elseif formatter.mode == "custom" then
-    format_with_custom(formatter --[[@as CustomFormatter]])
+  ---@type Formatter[]
+  local formatters
+  if vim.tbl_islist(formatter) then
+    formatters = formatter
   else
-    vim.notify(string.format("Error: invalid formatter %s", vim.inspect(formatter)), vim.log.levels.ERROR)
+    formatters = { formatter }
+  end
+
+  for _, single_formatter in ipairs(formatters) do
+    if single_formatter.mode == "lsp" then
+      format_with_lsp(single_formatter.client_name)
+    elseif single_formatter.mode == "shell" then
+      format_with_cmd(single_formatter.cmd)
+    elseif single_formatter.mode == "custom" then
+      format_with_custom(single_formatter --[[@as CustomFormatter]])
+    else
+      vim.notify(string.format("Error: invalid formatter %s", vim.inspect(single_formatter)), vim.log.levels.ERROR)
+    end
   end
 end
 

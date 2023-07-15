@@ -34,7 +34,7 @@ This plugin has a few core principles to keep it simple:
       returns a formatter
 - [x] Add CustomFormatter - a function that gets an array of lines and returns
       a new array of lines
-- [ ] Support concatenating formatters
+- [x] Support concatenating formatters
 - [ ] File size limit / Line count limit - to avoid hanging on files that are
       too big (add a :ForceFormat command and notify the user why formatting was
       skipped)
@@ -45,7 +45,7 @@ This plugin has a few core principles to keep it simple:
 - [ ] Shell formatter - when the result is the same as the input don't modify
       the buffer
 
-## formatters
+## Formatters
 
 There are currently 3 types of formatters:
 
@@ -110,7 +110,7 @@ format_on_save.setup({
       else
         return formatters.lsp()
       end
-    end
+    end,
 
     -- Add custom formatter
     filetype1 = formatters.remove_trailing_whitespace,
@@ -118,7 +118,13 @@ format_on_save.setup({
       return vim.tbl_map(function(line)
         return line:gsub("true", "false")
       end, lines)
-    end})
+    end}),
+
+    -- Concatenate formatters
+    filetype3 = {
+      formatters.remove_trailing_whitespace,
+      formatters.lsp(),
+    },
   },
 })
 ```

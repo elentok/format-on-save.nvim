@@ -9,7 +9,7 @@ local M = {
 
 ---@class SetupOptions
 ---@field exclude_path_patterns? string[] Paths where format-on-save is disabled
----@field formatter_by_ft? { [string]: Formatter }
+---@field formatter_by_ft? { [string]: Formatter|Formatter[] }
 ---@field auto_commands? boolean Add BufWritePre and BufWritePost auto commands (defaults to true)
 ---@field user_commands? boolean Add Format, FormatOn and FormatOff auto commands (defaults to true)
 

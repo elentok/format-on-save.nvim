@@ -23,7 +23,7 @@
 
 ---@class Config
 ---@field exclude_path_patterns string[] Paths where format-on-save is disabled
----@field formatter_by_ft { [string]: Formatter }
+---@field formatter_by_ft { [string]: Formatter|Formatter[] }
 ---@field enabled boolean
 
 ---@type Config
