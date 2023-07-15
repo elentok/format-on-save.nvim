@@ -7,6 +7,27 @@ editing the same file in a split).
 
 NOTE: This is a work in progress and the API might change.
 
+## Why another formatting plugin?
+
+Until now I've used LSP-only formatting with a simple auto command with null-ls
+to cover non-LSP formatters. However, now that null-ls is being archived I
+needed to find an alternative.
+
+I tried several plugins but:
+
+- Neither supported both LSP and non-LSP formatters
+- Some of them format asynchronously which is tricky because you need to lock
+  the buffer before formatting and there are a lot of end cases.
+- Some of them support partial formatting which adds a lot of complexity.
+
+This plugin has a few core principles to keep it simple:
+
+- **Synchronous formatting** - Most of the formatters I use are quite fast and
+  the delay isn't noticeable to me.
+- **Format on save only** (no partial formatting) - There's a `:Format` command
+  you can call whenever you want but the purpose of this plugin is to save after
+  formatting.
+
 ## TODO
 
 - [x] Add LazyFormatter - a function that is only called while formatting and
