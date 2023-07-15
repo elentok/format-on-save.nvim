@@ -10,7 +10,13 @@
 ---@class LspFormatter: LspFormatterOptions
 ---@field mode "lsp"
 
----@alias NonLazyFormatter LspFormatter | ShellFormatter
+---@class CustomFormatterOptions
+---@field format fun(lines: string[]): nil|string[] When the formatting fails returns nil
+
+---@class CustomFormatter: CustomFormatterOptions
+---@field mode "custom"
+
+---@alias NonLazyFormatter LspFormatter | ShellFormatter | CustomFormatter
 ---@alias LazyFormatter fun(): NonLazyFormatter
 
 ---@alias Formatter LazyFormatter | NonLazyFormatter

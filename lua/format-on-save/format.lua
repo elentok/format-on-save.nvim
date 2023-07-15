@@ -57,6 +57,16 @@ local function format_with_cmd(cmd)
   vim.api.nvim_buf_set_lines(0, 0, -1, false, vim.fn.split(output, "\n"))
 end
 
+-- Formats the current buffer with a formatter function
+---@param formatter CustomFormatter
+local function format_with_custom(formatter)
+  local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
+  local output = formatter.format(lines)
+  if output ~= nil then
+    vim.api.nvim_buf_set_lines(0, 0, -1, false, output)
+  end
+end
+
 -- Formats the current buffer synchronously.
 local function format()
   if not config.enabled then
@@ -80,6 +90,8 @@ local function format()
     format_with_lsp(formatter.client_name)
   elseif formatter.mode == "shell" then
     format_with_cmd(formatter.cmd)
+  elseif formatter.mode == "custom" then
+    format_with_custom(formatter --[[@as CustomFormatter]])
   else
     vim.notify(string.format("Error: invalid formatter %s", vim.inspect(formatter)), vim.log.levels.ERROR)
   end

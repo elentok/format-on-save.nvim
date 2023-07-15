@@ -11,7 +11,7 @@ NOTE: This is a work in progress and the API might change.
 
 - [x] Add LazyFormatter - a function that is only called while formatting and
       returns a formatter
-- [ ] Add CustomFormatter - a function that gets an array of lines and returns
+- [x] Add CustomFormatter - a function that gets an array of lines and returns
       a new array of lines
 - [ ] Support concatenating formatters
 - [ ] File size limit / Line count limit - to avoid hanging on files that are
@@ -33,6 +33,8 @@ There are currently 3 types of formatters:
   that support formatting.
 - **ShellFormatter** - passes the current buffer via stdin to a shell program (like `prettierd`
   or `shfmt`) and replaces the buffer's contents with the result.
+- **CustomFormatter** - passes the lines of the current buffer through a
+  function that modifies them and then updates the contents.
 - **LazyFormatter** - a function that is called lazily every time we format the
   file, this allows using a different formatter for different files.
 
@@ -88,6 +90,14 @@ format_on_save.setup({
         return formatters.lsp()
       end
     end
+
+    -- Add custom formatter
+    filetype1 = formatters.remove_trailing_whitespace,
+    filetype2 = formatters.custom({ format = function(lines)
+      return vim.tbl_map(function(line)
+        return line:gsub("true", "false")
+      end, lines)
+    end})
   },
 })
 ```
