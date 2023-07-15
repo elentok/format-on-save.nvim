@@ -1,5 +1,6 @@
 local config = require("format-on-save.config")
 local cursors = require("format-on-save.cursors")
+local systemlist = require("format-on-save.systemlist")
 
 local function is_current_buf_excluded()
   local path = vim.fn.expand("%:p")
@@ -25,7 +26,7 @@ local function expand_and_concat_cmd(cmd)
 
   for index, value in ipairs(cmd) do
     if value == "%" then
-      cmd[index] = vim.fn.expand(value)
+      cmd[index] = vim.fn.shellescape(vim.fn.expand(value))
     end
   end
 
@@ -46,15 +47,24 @@ end
 
 ---@param cmd string|string[]
 local function format_with_cmd(cmd)
-  cmd = expand_and_concat_cmd(cmd) .. " 2>&1"
+  cmd = expand_and_concat_cmd(cmd) -- .. " 2>&1"
   local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
-  local output = vim.fn.system(cmd, lines)
-  if vim.v.shell_error ~= 0 then
-    vim.notify('Error formatting:\n\n' .. output, vim.log.levels.ERROR, { title = "Formatter error" })
+
+  local result = systemlist(cmd, lines)
+  if result.exitcode ~= 0 then
+    local message = vim.fn.join(vim.list_extend(result.stdout, result.stderr), "\n")
+    vim.notify('Error formatting:\n\n' .. message, vim.log.levels.ERROR, { title = "Formatter error" })
     return
   end
 
-  vim.api.nvim_buf_set_lines(0, 0, -1, false, vim.fn.split(output, "\n"))
+  if #result.stderr > 0 and config.stderr_loglevel ~= vim.log.levels.OFF then
+    local message = string.format('Formatter "%s" was successful but included stderr:\n%s\n',
+      cmd,
+      vim.fn.join(result.stderr, "\n"))
+    vim.notify(message, config.stderr_loglevel, { title = "Formatter warning" })
+  end
+
+  vim.api.nvim_buf_set_lines(0, 0, -1, false, result.stdout)
 end
 
 -- Formats the current buffer with a formatter function

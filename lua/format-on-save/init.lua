@@ -12,11 +12,16 @@ local M = {
 ---@field formatter_by_ft? { [string]: Formatter|Formatter[] }
 ---@field auto_commands? boolean Add BufWritePre and BufWritePost auto commands (defaults to true)
 ---@field user_commands? boolean Add Format, FormatOn and FormatOff auto commands (defaults to true)
+---@field stderr_loglevel integer The log level when a formatter was successful but included stderr output (from |vim.log.levels|, defaults to WARN)
 
 ---@param opts SetupOptions
 function M.setup(opts)
   vim.list_extend(config.exclude_path_patterns, opts.exclude_path_patterns or {})
   config.formatter_by_ft = vim.tbl_extend("force", config.formatter_by_ft, opts.formatter_by_ft or {})
+
+  if opts.stderr_loglevel ~= nil then
+    config.stderr_loglevel = opts.stderr_loglevel
+  end
 
   -- Register auto commands
   if opts.auto_commands ~= false then

@@ -25,12 +25,14 @@
 ---@field exclude_path_patterns string[] Paths where format-on-save is disabled
 ---@field formatter_by_ft { [string]: Formatter|Formatter[] }
 ---@field enabled boolean
+---@field stderr_loglevel integer The log level when a formatter was successful but included stderr output (from |vim.log.levels|, defaults to WARN)
 
 ---@type Config
 local config = {
   exclude_path_patterns = {},
   formatter_by_ft = {},
   enabled = true,
+  stderr_loglevel = vim.log.levels.WARN,
 }
 
 return config

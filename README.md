@@ -121,13 +121,30 @@ format_on_save.setup({
     end}),
 
     -- Concatenate formatters
-    filetype3 = {
+    python = {
       formatters.remove_trailing_whitespace,
-      formatters.lsp(),
+      formatters.shell({ cmd = "tidy-imports" }),
+      formatters.black,
     },
   },
 })
 ```
+
+### Disable warning when formatter is successful but wrote to stderr
+
+When a formatter exits with exitcode 0 but its stderr has contents we show a
+warning message (via `vim.notify`).
+
+The default level is `vim.log.levels.WARN`. To disable this message entirely set
+the `stderr_loglevel` config key to `vim.log.levels.OFF`:
+
+```lua
+require('format-on-save').setup({
+  stderr_loglevel = vim.log.levels.OFF,
+})
+```
+
+### Disable auto commands and user commands
 
 By default it will add the `BufWritePre` and `BufWritePost` autocommands and the `Format`,
 `FormatOn` and `FormatOff` user commands. If you prefer to avoid it and define
