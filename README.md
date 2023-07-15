@@ -25,8 +25,8 @@ This plugin has a few core principles to keep it simple:
 - **Synchronous formatting** - Most of the formatters I use are quite fast and
   the delay isn't noticeable to me.
 - **Format on save only** (no partial formatting) - There's a `:Format` command
-  you can call whenever you want but the purpose of this plugin is to save after
-  formatting.
+  you can call whenever you want but the purpose of this plugin is to format when
+  saving.
 
 ## TODO
 
