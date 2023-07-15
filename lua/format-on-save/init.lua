@@ -9,9 +9,10 @@ local M = {
 
 ---@class SetupOptions
 ---@field exclude_path_patterns? string[] Paths where format-on-save is disabled
----@field formatter_by_ft? { [string]: LspFormatter | ShellFormatter }
+---@field formatter_by_ft? { [string]: Formatter }
 ---@field auto_commands? boolean Add BufWritePre and BufWritePost auto commands (defaults to true)
 ---@field user_commands? boolean Add Format, FormatOn and FormatOff auto commands (defaults to true)
+
 ---@param opts SetupOptions
 function M.setup(opts)
   vim.list_extend(config.exclude_path_patterns, opts.exclude_path_patterns or {})

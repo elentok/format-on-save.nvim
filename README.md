@@ -9,7 +9,7 @@ NOTE: This is a work in progress and the API might change.
 
 ## TODO
 
-- [ ] Add LazyFormatter - a function that is only called while formatting and
+- [x] Add LazyFormatter - a function that is only called while formatting and
       returns a formatter
 - [ ] Add CustomFormatter - a function that gets an array of lines and returns
       a new array of lines
@@ -20,6 +20,19 @@ NOTE: This is a work in progress and the API might change.
 - [ ] Use vim.notify to show error messages
 - [ ] Support formatters that don't work with stdin by writing to a temp file
       first
+- [ ] Add LSP timeout to configuration
+
+## formatters
+
+There are currently 3 types of formatters:
+
+- **LspFormatter** - uses `vim.lsp.buf.format` to format the file, you can pass
+  a `client_name` option to use a specific client in case there are several ones
+  that support formatting.
+- **ShellFormatter** - passes the current buffer via stdin to a shell program (like `prettierd`
+  or `shfmt`) and replaces the buffer's contents with the result.
+- **LazyFormatter** - a function that is called lazily every time we format the
+  file, this allows using a different formatter for different files.
 
 ## Installation
 
@@ -61,6 +74,18 @@ format_on_save.setup({
     typescript = formatters.prettierd,
     typescriptreact = formatters.prettierd,
     yaml = formatters.lsp,
+
+    -- Add your own shell formatters:
+    myfiletype = formatters.shell({ cmd = { "myformatter", "%" } }),
+
+    -- Add lazy formatter that will only run when formatting:
+    my_custom_formatter = function()
+      if vim.api.nvim_buf_get_name(0):match("/README.md$") then
+        return formatters.prettierd
+      else
+        return formatters.lsp()
+      end
+    end
   },
 })
 ```

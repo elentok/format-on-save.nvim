@@ -1,19 +1,22 @@
 local M = {}
 
-M.prettierd = { mode = "shell", cmd = { "prettierd", "%" } }
-M.black = { mode = "shell", cmd = { "black", "--stdin-filename", "%", "--quiet", "-" } }
-M.shfmt = { mode = "shell", cmd = { "shfmt", "-i", "2", "-bn", "-ci", "-sr" } }
-
----@type LspFormatter
-M.lsp = { mode = "lsp" }
-
--- Creates an LSP formatter that uses a specific LSP client_name
--- (helpful when you have multiple LSP clients for a filetype that support
--- formatting).
----@param client_name string
----@return LspFormatter
-function M.specific_lsp(client_name)
-  return { mode = "lsp", client_name = client_name }
+-- Creates a Shell formatter.
+---@param opts ShellFormatterOptions
+---@return ShellFormatter
+function M.shell(opts)
+  return vim.tbl_extend("force", { mode = "shell" }, opts or {})
 end
+
+-- Creates an LSP formatter.
+-- Pass the 'client_name' option to use a specific client.
+---@param opts LspFormatterOptions
+---@return LspFormatter
+function M.lsp(opts)
+  return vim.tbl_extend("force", { mode = "lsp" }, opts or {})
+end
+
+M.prettierd = M.shell({ cmd = { "prettierd", "%" } })
+M.black = M.shell({ cmd = { "black", "--stdin-filename", "%", "--quiet", "-" } })
+M.shfmt = M.shell({ cmd = { "shfmt", "-i", "2", "-bn", "-ci", "-sr" } })
 
 return M

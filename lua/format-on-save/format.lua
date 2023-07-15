@@ -71,6 +71,11 @@ local function format()
     return
   end
 
+  -- Lazy formatter
+  if type(formatter) == "function" then
+    formatter = formatter()
+  end
+
   if formatter.mode == "lsp" then
     format_with_lsp(formatter.client_name)
   elseif formatter.mode == "shell" then
