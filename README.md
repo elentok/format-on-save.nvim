@@ -17,10 +17,12 @@ NOTE: This is a work in progress and the API might change.
 - [ ] File size limit / Line count limit - to avoid hanging on files that are
       too big (add a :ForceFormat command and notify the user why formatting was
       skipped)
-- [ ] Use vim.notify to show error messages
+- [x] Use vim.notify to show error messages
 - [ ] Support formatters that don't work with stdin by writing to a temp file
       first
 - [ ] Add LSP timeout to configuration
+- [ ] Shell formatter - when the result is the same as the input don't modify
+      the buffer
 
 ## formatters
 

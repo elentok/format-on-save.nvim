@@ -50,7 +50,7 @@ local function format_with_cmd(cmd)
   local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
   local output = vim.fn.system(cmd, lines)
   if vim.v.shell_error ~= 0 then
-    vim.notify(output, vim.log.levels.ERROR, { title = "Formatter error" })
+    vim.notify('Error formatting:\n\n' .. output, vim.log.levels.ERROR, { title = "Formatter error" })
     return
   end
 
@@ -60,7 +60,7 @@ end
 -- Formats the current buffer synchronously.
 local function format()
   if not config.enabled then
-    print("Format-on-save is disabled, use :FormatOn to enable")
+    vim.notify("Format-on-save is disabled, use :FormatOn to enable", vim.log.levels.WARN)
     return
   end
 
@@ -81,7 +81,7 @@ local function format()
   elseif formatter.mode == "shell" then
     format_with_cmd(formatter.cmd)
   else
-    print(string.format("Error: invalid formatter %s", vim.inspect(formatter)))
+    vim.notify(string.format("Error: invalid formatter %s", vim.inspect(formatter)), vim.log.levels.ERROR)
   end
 end
 
