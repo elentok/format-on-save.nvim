@@ -17,11 +17,12 @@ end
 
 -- When the command is an array, first expand "%" array items to the full file
 -- path and then concat to a single string.
----@param cmd string|string[]
+---@param cmd string[]
 ---@param tempfile? string If defined this value is used to expand the "%" value
 ---@return string
 local function expand_and_concat_cmd(cmd, tempfile)
   if type(cmd) == "string" then
+    vim.notify("Shell formatters with a string cmd are deprecated, please use an array", vim.log.levels.WARN)
     return cmd
   end
 
