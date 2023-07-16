@@ -59,6 +59,9 @@ There are currently 3 types of formatters:
     returns a string to be used as the tempfile and then the plugin will write the
     buffer to this file, run the command on it (the "%" value will be expanded to
     the tempfile) and read it back and fill in the buffer).
+  - The first item in the `cmd` array will be expanded by default using the `vim.fn.exepath`
+    function in order to detect mason binaries. To opt-out set the `expand_executable`
+    field to `false`.
 - **CustomFormatter** - passes the lines of the current buffer through a
   function that modifies them and then updates the contents.
 - **LazyFormatter** - a function that is called lazily every time we format the
@@ -159,6 +162,12 @@ format_on_save.setup({
       formatters.shell({ cmd = { "gofmt" } }),
     },
   },
+
+  -- Optional: fallback formatter to use when no formatters match the current filetype
+  fallback_formatter = {
+    formatters.remove_trailing_whitespace,
+    formatters.prettierd,
+  }
 })
 ```
 

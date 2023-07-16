@@ -10,6 +10,7 @@ local M = {
 ---@class SetupOptions
 ---@field exclude_path_patterns? string[] Paths where format-on-save is disabled
 ---@field formatter_by_ft? { [string]: Formatter|Formatter[] }
+---@field fallback_formatter? Formatter|Formatter[] Formatter to use if no formatter was found for the current filetype
 ---@field auto_commands? boolean Add BufWritePre and BufWritePost auto commands (defaults to true)
 ---@field user_commands? boolean Add Format, FormatOn and FormatOff auto commands (defaults to true)
 ---@field debug? boolean Enable extra logs for debugging (defaults to false)
@@ -20,6 +21,10 @@ local M = {
 function M.setup(opts)
   vim.list_extend(config.exclude_path_patterns, opts.exclude_path_patterns or {})
   config.formatter_by_ft = vim.tbl_extend("force", config.formatter_by_ft, opts.formatter_by_ft or {})
+
+  if opts.fallback_formatter ~= nil then
+    config.fallback_formatter = opts.fallback_formatter
+  end
 
   if opts.stderr_loglevel ~= nil then
     config.stderr_loglevel = opts.stderr_loglevel

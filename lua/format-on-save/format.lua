@@ -159,11 +159,18 @@ local function format()
     return
   end
 
+  if is_current_buf_excluded() then
+    return
+  end
+
   cursors.save_current_buf_cursors()
   local filetype = vim.api.nvim_buf_get_option(0, "filetype")
   local formatter = config.formatter_by_ft[filetype]
-  if formatter == nil or is_current_buf_excluded() then
-    return
+  if formatter == nil then
+    if config.fallback_formatter == nil then
+      return
+    end
+    formatter = config.fallback_formatter
   end
 
   -- Lazy formatter

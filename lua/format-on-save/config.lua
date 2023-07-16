@@ -26,6 +26,7 @@
 ---@class Config
 ---@field exclude_path_patterns string[] Paths where format-on-save is disabled
 ---@field formatter_by_ft { [string]: Formatter|Formatter[] }
+---@field fallback_formatter? Formatter|Formatter[] Formatter to use if no formatter was found for the current filetype
 ---@field enabled boolean
 ---@field debug boolean Enable extra logs for debugging (defaults to false)
 ---@field stderr_loglevel integer The log level when a formatter was successful but included stderr output (from |vim.log.levels|, defaults to WARN)
