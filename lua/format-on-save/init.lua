@@ -12,7 +12,9 @@ local M = {
 ---@field formatter_by_ft? { [string]: Formatter|Formatter[] }
 ---@field auto_commands? boolean Add BufWritePre and BufWritePost auto commands (defaults to true)
 ---@field user_commands? boolean Add Format, FormatOn and FormatOff auto commands (defaults to true)
----@field stderr_loglevel integer The log level when a formatter was successful but included stderr output (from |vim.log.levels|, defaults to WARN)
+---@field debug? boolean Enable extra logs for debugging (defaults to false)
+---@field stderr_loglevel? integer The log level when a formatter was successful but included stderr output (from |vim.log.levels|, defaults to WARN)
+---@field partial_update? boolean Experimental feature of only updating modified lines
 
 ---@param opts SetupOptions
 function M.setup(opts)
@@ -21,6 +23,14 @@ function M.setup(opts)
 
   if opts.stderr_loglevel ~= nil then
     config.stderr_loglevel = opts.stderr_loglevel
+  end
+
+  if opts.partial_update ~= nil then
+    config.partial_update = opts.partial_update
+  end
+
+  if opts.debug ~= nil then
+    config.debug = opts.debug
   end
 
   -- Register auto commands

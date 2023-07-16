@@ -69,6 +69,29 @@ local function prepare_tempfile(opts)
   return opts.tempfile()
 end
 
+---@param original_lines string[]
+---@param formatted_lines string[]
+local function update_buffer(original_lines, formatted_lines)
+  if not config.partial_update then
+    vim.api.nvim_buf_set_lines(0, 0, -1, false, formatted_lines)
+    return
+  end
+
+  if #formatted_lines < #original_lines then
+    -- delete extra lines
+    vim.api.nvim_buf_set_lines(0, #original_lines, -1, false, {})
+  end
+
+  for index, formatted_line in pairs(formatted_lines) do
+    if formatted_line ~= original_lines[index] then
+      if config.debug then
+        print(string.format("[format-on-save update buffer] setting line #%d to '%s'", index, formatted_line))
+      end
+      vim.api.nvim_buf_set_lines(0, index - 1, index, false, { formatted_line })
+    end
+  end
+end
+
 ---@param opts ShellFormatter
 local function format_with_shell(opts)
   local tempfile = prepare_tempfile(opts)
@@ -100,7 +123,7 @@ local function format_with_shell(opts)
     os.remove(tempfile)
   end
 
-  vim.api.nvim_buf_set_lines(0, 0, -1, false, formatted_lines)
+  update_buffer(lines, formatted_lines)
 end
 
 -- Formats the current buffer with a formatter function

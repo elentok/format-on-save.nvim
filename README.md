@@ -64,6 +64,22 @@ There are currently 3 types of formatters:
 - **LazyFormatter** - a function that is called lazily every time we format the
   file, this allows using a different formatter for different files.
 
+## Partial update
+
+When updating all of the lines in a buffer all of the extmarks get removed. In
+an attempt to avoid that I added an experimental flag `partial_update` that only
+updates lines that have changed (it's currently using a very simple algorithm,
+compares each line by index, no advance diffing, I might look into that in the
+future).
+
+You can enable it like this:
+
+```lua
+require('format-on-save').setup({
+  partial_update = true,
+})
+```
+
 ## Installation
 
 Add the following to your package manager:
