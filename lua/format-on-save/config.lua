@@ -17,7 +17,7 @@
 ---@class CustomFormatter: CustomFormatterOptions
 ---@field mode "custom"
 
----@alias NonLazyFormatter LspFormatter | ShellFormatter | CustomFormatter
+---@alias NonLazyFormatter nil | LspFormatter | ShellFormatter | CustomFormatter
 ---@alias LazyFormatter fun(): NonLazyFormatter|NonLazyFormatter[]
 
 ---@alias Formatter LazyFormatter | NonLazyFormatter

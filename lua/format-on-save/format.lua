@@ -156,6 +156,10 @@ local function format()
     formatter = formatter()
   end
 
+  if formatter == nil then
+    return
+  end
+
   ---@type Formatter[]
   local formatters
   if vim.tbl_islist(formatter) then
@@ -165,14 +169,16 @@ local function format()
   end
 
   for _, single_formatter in ipairs(formatters) do
-    if single_formatter.mode == "lsp" then
-      format_with_lsp(single_formatter.client_name)
-    elseif single_formatter.mode == "shell" then
-      format_with_shell(single_formatter --[[@as ShellFormatter]])
-    elseif single_formatter.mode == "custom" then
-      format_with_custom(single_formatter --[[@as CustomFormatter]])
-    else
-      vim.notify(string.format("Error: invalid formatter %s", vim.inspect(single_formatter)), vim.log.levels.ERROR)
+    if single_formatter ~= nil then
+      if single_formatter.mode == "lsp" then
+        format_with_lsp(single_formatter.client_name)
+      elseif single_formatter.mode == "shell" then
+        format_with_shell(single_formatter --[[@as ShellFormatter]])
+      elseif single_formatter.mode == "custom" then
+        format_with_custom(single_formatter --[[@as CustomFormatter]])
+      else
+        vim.notify(string.format("Error: invalid formatter %s", vim.inspect(single_formatter)), vim.log.levels.ERROR)
+      end
     end
   end
 end
