@@ -31,8 +31,6 @@ local function expand_and_concat_cmd(opts, tempfile)
     filename = vim.fn.expand("%")
   end
 
-  put("OPTS", opts)
-  put("OPTS.CMD", opts.cmd)
   local cmd = vim.list_extend({}, opts.cmd)
 
   if opts.expand_executable then
