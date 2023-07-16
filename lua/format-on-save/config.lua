@@ -1,6 +1,7 @@
 ---@class ShellFormatterOptions
 ---@field cmd string[]
 ---@field tempfile? "random"|fun(): string Instead of passing the buffer through stdin write to a temp file and the shell command will modify it
+---@field expand_executable? boolean Use `vim.fn.exepath` to expand the first item in the `cmd` array (helps detect mason binaries, defaults to true)
 
 ---@class ShellFormatter: ShellFormatterOptions
 ---@field mode "shell"

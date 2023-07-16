@@ -17,18 +17,31 @@ end
 
 -- When the command is an array, first expand "%" array items to the full file
 -- path and then concat to a single string.
----@param cmd string[]
+---@param opts ShellFormatter
 ---@param tempfile? string If defined this value is used to expand the "%" value
----@return string
-local function expand_and_concat_cmd(cmd, tempfile)
-  if type(cmd) == "string" then
+---@return string|nil
+local function expand_and_concat_cmd(opts, tempfile)
+  if type(opts.cmd) == "string" then
     vim.notify("Shell formatters with a string cmd are deprecated, please use an array", vim.log.levels.WARN)
-    return cmd
+    return opts.cmd --[[@as string]]
   end
 
   local filename = tempfile
   if filename == nil then
     filename = vim.fn.expand("%")
+  end
+
+  put("OPTS", opts)
+  put("OPTS.CMD", opts.cmd)
+  local cmd = vim.list_extend({}, opts.cmd)
+
+  if opts.expand_executable then
+    local cmd_fullpath = vim.fn.exepath(cmd[1])
+    if cmd_fullpath == "" then
+      vim.notify(string.format("Formatter executable '%s' is missing", cmd[1]), vim.log.levels.ERROR)
+      return nil
+    end
+    cmd[1] = cmd_fullpath
   end
 
   for index, value in ipairs(cmd) do
@@ -97,7 +110,11 @@ end
 local function format_with_shell(opts)
   local tempfile = prepare_tempfile(opts)
 
-  local cmd = expand_and_concat_cmd(opts.cmd, tempfile)
+  local cmd = expand_and_concat_cmd(opts, tempfile)
+  if cmd == nil then
+    return
+  end
+
   local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
 
   if tempfile ~= nil then

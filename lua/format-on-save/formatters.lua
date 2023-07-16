@@ -2,9 +2,9 @@ local M = {}
 
 -- Creates a Shell formatter.
 ---@param opts ShellFormatterOptions
----@return ShellFormatter
+---@return ShellFormatter|nil
 function M.shell(opts)
-  return vim.tbl_extend("force", { mode = "shell" }, opts or {})
+  return vim.tbl_extend("force", { mode = "shell", expand_executable = true }, opts or {})
 end
 
 -- Creates an LSP formatter.
