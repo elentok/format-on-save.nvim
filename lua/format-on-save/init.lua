@@ -20,7 +20,8 @@ local M = {
 ---@param opts SetupOptions
 function M.setup(opts)
   vim.list_extend(config.exclude_path_patterns, opts.exclude_path_patterns or {})
-  config.formatter_by_ft = vim.tbl_extend("force", config.formatter_by_ft, opts.formatter_by_ft or {})
+  config.formatter_by_ft =
+    vim.tbl_extend("force", config.formatter_by_ft, opts.formatter_by_ft or {})
 
   if opts.fallback_formatter ~= nil then
     config.fallback_formatter = opts.fallback_formatter

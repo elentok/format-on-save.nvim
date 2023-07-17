@@ -25,13 +25,15 @@ end
 M.prettierd = M.shell({ cmd = { "prettierd", "%" } })
 M.black = M.shell({ cmd = { "black", "--stdin-filename", "%", "--quiet", "-" } })
 M.shfmt = M.shell({ cmd = { "shfmt", "-i", "2", "-bn", "-ci", "-sr" } })
+M.stylua =
+  M.shell({ cmd = { "stylua", "--search-parent-directories", "--stdin-filepath", "%", "-" } })
 
 M.remove_trailing_whitespace = M.custom({
   format = function(lines)
     return vim.tbl_map(function(line)
       return line:gsub("%s*$", "")
     end, lines)
-  end
+  end,
 })
 
 return M

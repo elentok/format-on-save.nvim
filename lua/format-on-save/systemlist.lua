@@ -9,7 +9,7 @@
 ---@return CommandResult
 local function systemlist(cmd, input)
   local stderr_tempfile = vim.fn.tempname()
-  cmd = string.format('%s 2> %s', cmd, vim.fn.shellescape(stderr_tempfile))
+  cmd = string.format("%s 2> %s", cmd, vim.fn.shellescape(stderr_tempfile))
   local stdout = vim.fn.systemlist(cmd, input)
 
   local stderr = {}
@@ -21,7 +21,7 @@ local function systemlist(cmd, input)
   return {
     stdout = stdout,
     stderr = stderr,
-    exitcode = vim.v.shell_error
+    exitcode = vim.v.shell_error,
   }
 end
 
