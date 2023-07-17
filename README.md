@@ -44,6 +44,10 @@ This plugin has a few core principles to keep it simple:
 - [ ] Add LSP timeout to configuration
 - [ ] Shell formatter - when the result is the same as the input don't modify
       the buffer
+- [ ] When non-LSP formatter fails (non-zero exitcode) show the error in a nicer
+      way (readonly message buffer, notification or popup).
+- [ ] Look into using vim.diff() to make the partial update smarter (only update
+      lines that actually changed)
 
 ## Formatters
 
