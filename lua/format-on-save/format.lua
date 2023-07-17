@@ -110,7 +110,8 @@ local function update_buffer(original_lines, formatted_lines)
           )
         )
       end
-      vim.api.nvim_buf_set_lines(0, index - 1, index, false, { formatted_line })
+      vim.fn.setline(index, formatted_line)
+      -- vim.api.nvim_buf_set_lines(0, index - 1, index, false, { formatted_line })
     end
   end
 end
