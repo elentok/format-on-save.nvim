@@ -96,7 +96,7 @@ local function update_buffer(original_lines, formatted_lines)
 
   if #formatted_lines < #original_lines then
     -- delete extra lines
-    vim.api.nvim_buf_set_lines(0, #original_lines, -1, false, {})
+    vim.api.nvim_buf_set_lines(0, #formatted_lines, -1, false, {})
   end
 
   for index, formatted_line in pairs(formatted_lines) do
