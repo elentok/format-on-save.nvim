@@ -1,17 +1,11 @@
 local config = require("format-on-save.config")
 local cursors = require("format-on-save.cursors")
 local systemlist = require("format-on-save.systemlist")
+local util = require("format-on-save.util")
 
 local function is_current_buf_excluded()
   local path = vim.fn.expand("%:p")
-  for _, pattern in ipairs(config.exclude_path_patterns) do
-    if vim.fn.match(path, pattern) ~= -1 then
-      print("Skipping format-on-save because file matches exclude pattern")
-      return true
-    end
-  end
-
-  return false
+  return util.is_path_excluded(path)
 end
 
 -- When the command is an array, first expand "%" array items to the full file
@@ -177,7 +171,7 @@ local function format()
     return
   end
 
-  if is_current_buf_excluded() then
+  if util.is_path_excluded(vim.fn.expand("%:p")) then
     return
   end
 
