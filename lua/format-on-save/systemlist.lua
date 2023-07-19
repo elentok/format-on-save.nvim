@@ -8,8 +8,11 @@
 ---@param input? string[]
 ---@return CommandResult
 local function systemlist(cmd, input)
+  if type(cmd) == "table" and vim.tbl_islist(cmd) then
+    cmd = table.concat(cmd, " ")
+  end
   local stderr_tempfile = vim.fn.tempname()
-  cmd = string.format("%s 2> %s", cmd, vim.fn.shellescape(stderr_tempfile))
+  cmd = string.format("(%s) 2> %s", cmd, vim.fn.shellescape(stderr_tempfile))
   local stdout = vim.fn.systemlist(cmd, input)
 
   local stderr = {}
