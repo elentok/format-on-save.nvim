@@ -158,14 +158,15 @@ end
 ---@param formatter CustomFormatter
 local function format_with_custom(formatter)
   local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
-  local output = formatter.format(lines)
-  if output ~= nil then
-    vim.api.nvim_buf_set_lines(0, 0, -1, false, output)
+  local formatted_lines = formatter.format(lines)
+  if formatted_lines ~= nil then
+    update_buffer(lines, formatted_lines)
   end
 end
 
 -- Formats the current buffer synchronously.
-local function format()
+---@param formatter? Formatter
+local function format(formatter)
   if not config.enabled then
     vim.notify("Format-on-save is disabled, use :FormatOn to enable", vim.log.levels.WARN)
     return
@@ -177,7 +178,10 @@ local function format()
 
   cursors.save_current_buf_cursors()
   local filetype = vim.api.nvim_buf_get_option(0, "filetype")
-  local formatter = config.formatter_by_ft[filetype]
+  if formatter == nil then
+    formatter = config.formatter_by_ft[filetype]
+  end
+
   if formatter == nil then
     if config.fallback_formatter == nil then
       return

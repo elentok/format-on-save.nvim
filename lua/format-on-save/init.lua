@@ -42,10 +42,13 @@ function M.setup(opts)
   -- Register auto commands
   if opts.auto_commands ~= false then
     local augroup_id = vim.api.nvim_create_augroup("FormatOnSave", {})
-    vim.api.nvim_create_autocmd(
-      { "BufWritePre" },
-      { pattern = "*", callback = format, group = augroup_id }
-    )
+    vim.api.nvim_create_autocmd({ "BufWritePre" }, {
+      pattern = "*",
+      callback = function()
+        format()
+      end,
+      group = augroup_id,
+    })
     vim.api.nvim_create_autocmd(
       { "BufWritePost" },
       { pattern = "*", callback = cursors.restore_current_buf_cursors, group = augroup_id }
