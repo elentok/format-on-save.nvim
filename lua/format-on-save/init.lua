@@ -16,12 +16,17 @@ local M = {
 ---@field debug? boolean Enable extra logs for debugging (defaults to false)
 ---@field stderr_loglevel? integer The log level when a formatter was successful but included stderr output (from |vim.log.levels|, defaults to WARN)
 ---@field partial_update? boolean Experimental feature of only updating modified lines
+---@field run_with_sh? boolean Prefix all shell commands with "sh -c" (default: true)
 
 ---@param opts SetupOptions
 function M.setup(opts)
   vim.list_extend(config.exclude_path_patterns, opts.exclude_path_patterns or {})
   config.formatter_by_ft =
     vim.tbl_extend("force", config.formatter_by_ft, opts.formatter_by_ft or {})
+
+  if opts.run_with_sh ~= nil then
+    config.run_with_sh = opts.run_with_sh
+  end
 
   if opts.fallback_formatter ~= nil then
     config.fallback_formatter = opts.fallback_formatter

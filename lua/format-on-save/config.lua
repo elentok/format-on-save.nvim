@@ -31,6 +31,7 @@
 ---@field debug boolean Enable extra logs for debugging (defaults to false)
 ---@field stderr_loglevel integer The log level when a formatter was successful but included stderr output (from |vim.log.levels|, defaults to WARN)
 ---@field partial_update boolean Experimental feature of only updating modified lines
+---@field run_with_sh boolean Prefix all shell commands with "sh -c" (default: true)
 
 ---@type Config
 local config = {
@@ -40,6 +41,7 @@ local config = {
   debug = false,
   stderr_loglevel = vim.log.levels.WARN,
   partial_update = false,
+  run_with_sh = true,
 }
 
 return config

@@ -1,3 +1,5 @@
+local config = require("format-on-save.config")
+
 ---@class CommandResult
 ---@field stdout string[] The lines sent to stdout
 ---@field stderr string[] The lines sent to stderr
@@ -13,7 +15,12 @@ local function systemlist(cmd, input)
   end
   local stderr_tempfile = vim.fn.tempname()
   cmd = string.format("(%s) 2> %s", cmd, vim.fn.shellescape(stderr_tempfile))
-  local stdout = vim.fn.systemlist({ "sh", "-c", cmd }, input)
+
+  if config.run_with_sh then
+    cmd = { "sh", "-c", cmd }
+  end
+
+  local stdout = vim.fn.systemlist(cmd, input)
 
   local stderr = {}
   if vim.fn.filereadable(stderr_tempfile) then

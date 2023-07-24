@@ -172,6 +172,10 @@ format_on_save.setup({
     formatters.remove_trailing_whitespace,
     formatters.prettierd,
   }
+
+  -- By default, all shell commands are prefixed with "sh -c" (see PR #3)
+  -- To prevent that set `run_with_sh` to `false`.
+  run_with_sh = false,
 })
 ```
 
