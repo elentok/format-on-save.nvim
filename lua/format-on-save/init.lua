@@ -62,7 +62,7 @@ function M.setup(opts)
 
   -- Register user commands
   if opts.auto_commands ~= false then
-    vim.api.nvim_create_user_command("Format", format, {})
+    vim.api.nvim_create_user_command("Format", function() format() end, {})
     vim.api.nvim_create_user_command("FormatOn", M.enable, {})
     vim.api.nvim_create_user_command("FormatOff", M.disable, {})
   end
