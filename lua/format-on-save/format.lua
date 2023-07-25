@@ -105,6 +105,14 @@ local function update_buffer(original_lines, formatted_lines)
   end
 end
 
+---@params lines string[]
+---@return string[]
+local function clean_ascii_colors(lines)
+  return vim.tbl_map(function(line)
+    return vim.fn.substitute(line, "\\e\\[[0-9;]*m", "", "g")
+  end, lines)
+end
+
 ---@param opts ShellFormatter
 local function format_with_shell(opts)
   local tempfile = prepare_tempfile(opts)
@@ -122,9 +130,8 @@ local function format_with_shell(opts)
 
   local result = systemlist(cmd, lines)
   if result.exitcode ~= 0 then
-    local error_message = { "Error formatting:", "" }
-    vim.list_extend(error_message, result.stdout)
-    vim.list_extend(error_message, result.stderr)
+    local error_message = clean_ascii_colors(result.stdout)
+    vim.list_extend(error_message, clean_ascii_colors(result.stderr))
     config.error_notifier.show({
       title = "Formatter error",
       body = error_message,
