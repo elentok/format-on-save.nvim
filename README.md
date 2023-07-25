@@ -179,6 +179,40 @@ format_on_save.setup({
 })
 ```
 
+### Error messages
+
+By default the plugin uses `vim.notify()` to show error messages, you can
+customize it by setting the `error_notifier` configuration flag:
+
+```lua
+local format_on_save = require("format-on-save")
+local message_buffer = require("format-on-save.error-notifiers.message-buffer")
+
+format_on_save.setup({
+  error_notifier = message_buffer,
+})
+```
+
+Alternatively you can implement your own:
+
+```lua
+local format_on_save = require("format-on-save")
+
+---@type ErrorNotifier
+local error_notifier = {
+  show = function(opts)
+    -- use opts.title and opts.body
+  end,
+  hide = function()
+    -- hide the error when it's been resolved
+  end,
+}
+
+format_on_save.setup({
+  error_notifier = error_notifier,
+})
+```
+
 ### Disable warning when formatter is successful but wrote to stderr
 
 When a formatter exits with exitcode 0 but its stderr has contents we show a
