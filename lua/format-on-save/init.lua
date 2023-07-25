@@ -17,6 +17,7 @@ local M = {
 ---@field stderr_loglevel? integer The log level when a formatter was successful but included stderr output (from |vim.log.levels|, defaults to WARN)
 ---@field partial_update? boolean Experimental feature of only updating modified lines
 ---@field run_with_sh? boolean Prefix all shell commands with "sh -c" (default: true)
+---@field error_notifier? ErrorNotifier How to display error messages (default: vim.notify() via require('format-on-save.notifiers.vim'))
 
 ---@param opts SetupOptions
 function M.setup(opts)
@@ -26,6 +27,10 @@ function M.setup(opts)
 
   if opts.run_with_sh ~= nil then
     config.run_with_sh = opts.run_with_sh
+  end
+
+  if opts.error_notifier ~= nil then
+    config.error_notifier = opts.error_notifier
   end
 
   if opts.fallback_formatter ~= nil then
@@ -62,7 +67,9 @@ function M.setup(opts)
 
   -- Register user commands
   if opts.auto_commands ~= false then
-    vim.api.nvim_create_user_command("Format", function() format() end, {})
+    vim.api.nvim_create_user_command("Format", function()
+      format()
+    end, {})
     vim.api.nvim_create_user_command("FormatOn", M.enable, {})
     vim.api.nvim_create_user_command("FormatOff", M.disable, {})
   end

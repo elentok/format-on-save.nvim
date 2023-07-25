@@ -1,3 +1,5 @@
+local vim_notify = require("format-on-save.error-notifiers.vim-notify")
+
 ---@class ShellFormatterOptions
 ---@field cmd string[]
 ---@field tempfile? "random"|fun(): string Instead of passing the buffer through stdin write to a temp file and the shell command will modify it
@@ -32,6 +34,7 @@
 ---@field stderr_loglevel integer The log level when a formatter was successful but included stderr output (from |vim.log.levels|, defaults to WARN)
 ---@field partial_update boolean Experimental feature of only updating modified lines
 ---@field run_with_sh boolean Prefix all shell commands with "sh -c" (default: true)
+---@field error_notifier ErrorNotifier How to display error messages (default: vim.notify() via require('format-on-save.notifiers.vim'))
 
 ---@type Config
 local config = {
@@ -42,6 +45,7 @@ local config = {
   stderr_loglevel = vim.log.levels.WARN,
   partial_update = false,
   run_with_sh = true,
+  error_notifier = vim_notify,
 }
 
 return config

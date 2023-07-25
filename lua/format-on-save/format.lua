@@ -3,11 +3,6 @@ local cursors = require("format-on-save.cursors")
 local systemlist = require("format-on-save.systemlist")
 local util = require("format-on-save.util")
 
-local function is_current_buf_excluded()
-  local path = vim.fn.expand("%:p")
-  return util.is_path_excluded(path)
-end
-
 -- When the command is an array, first expand "%" array items to the full file
 -- path and then concat to a single string.
 ---@param opts ShellFormatter
@@ -127,14 +122,17 @@ local function format_with_shell(opts)
 
   local result = systemlist(cmd, lines)
   if result.exitcode ~= 0 then
-    local message = vim.fn.join(vim.list_extend(result.stdout, result.stderr), "\n")
-    vim.notify(
-      "Error formatting:\n\n" .. message,
-      vim.log.levels.ERROR,
-      { title = "Formatter error" }
-    )
+    local error_message = { "Error formatting:", "" }
+    vim.list_extend(error_message, result.stdout)
+    vim.list_extend(error_message, result.stderr)
+    config.error_notifier.show({
+      title = "Formatter error",
+      body = error_message,
+    })
     return
   end
+
+  config.error_notifier.hide()
 
   if #result.stderr > 0 and config.stderr_loglevel ~= vim.log.levels.OFF then
     local message = string.format(
