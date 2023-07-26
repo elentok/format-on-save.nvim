@@ -47,6 +47,7 @@ end
 
 ---@param client_name? string Use a specific LSP client
 local function format_with_lsp(client_name)
+  util.debug("format_with_lsp", { client_name = client_name })
   local filter = nil
   if client_name ~= nil then
     filter = function(client)
@@ -90,15 +91,7 @@ local function update_buffer(original_lines, formatted_lines)
 
   for index, formatted_line in pairs(formatted_lines) do
     if formatted_line ~= original_lines[index] then
-      if config.debug then
-        print(
-          string.format(
-            "[format-on-save update buffer] setting line #%d to '%s'",
-            index,
-            formatted_line
-          )
-        )
-      end
+      util.debug(string.format("[update buffer] setting line #%d to '%s'", index, formatted_line))
       vim.fn.setline(index, formatted_line)
       -- vim.api.nvim_buf_set_lines(0, index - 1, index, false, { formatted_line })
     end
@@ -115,6 +108,7 @@ end
 
 ---@param opts ShellFormatter
 local function format_with_shell(opts)
+  util.debug("format_with_shell", opts)
   local tempfile = prepare_tempfile(opts)
 
   local cmd = expand_and_concat_cmd(opts, tempfile)
@@ -162,6 +156,7 @@ end
 -- Formats the current buffer with a formatter function
 ---@param formatter CustomFormatter
 local function format_with_custom(formatter)
+  util.debug("format_with_custom", { formatter = formatter })
   local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
   local formatted_lines = formatter.format(lines)
   if formatted_lines ~= nil then

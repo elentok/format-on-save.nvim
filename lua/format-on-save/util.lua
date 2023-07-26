@@ -15,4 +15,21 @@ function M.is_path_excluded(filepath)
   return false
 end
 
+--- Prints debug output
+-- Based on https://github.com/nanotee/nvim-lua-guide
+function M.debug(...)
+  if not config.debug then
+    return
+  end
+
+  local objects = { "[format-on-save]" }
+  for i = 1, select("#", ...) do
+    local v = select(i, ...)
+    table.insert(objects, vim.inspect(v))
+  end
+
+  print(table.concat(objects, " "))
+  return ...
+end
+
 return M

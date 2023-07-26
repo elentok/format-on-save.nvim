@@ -30,7 +30,7 @@ local vim_notify = require("format-on-save.error-notifiers.vim-notify")
 ---@field formatter_by_ft { [string]: Formatter|Formatter[] }
 ---@field fallback_formatter? Formatter|Formatter[] Formatter to use if no formatter was found for the current filetype
 ---@field enabled boolean
----@field debug boolean Enable extra logs for debugging (defaults to false)
+---@field debug boolean Enable extra logs for debugging (defaults to false, can also be set by setting FORMAT_ON_SAVE_DEBUG=true)
 ---@field stderr_loglevel integer The log level when a formatter was successful but included stderr output (from |vim.log.levels|, defaults to WARN)
 ---@field partial_update boolean Experimental feature of only updating modified lines
 ---@field run_with_sh boolean Prefix all shell commands with "sh -c" (default: true)
@@ -41,7 +41,7 @@ local config = {
   exclude_path_patterns = {},
   formatter_by_ft = {},
   enabled = true,
-  debug = false,
+  debug = (vim.env.FORMAT_ON_SAVE_DEBUG == "true"),
   stderr_loglevel = vim.log.levels.WARN,
   partial_update = false,
   run_with_sh = true,
