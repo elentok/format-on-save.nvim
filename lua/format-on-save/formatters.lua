@@ -1,3 +1,5 @@
+local util = require("format-on-save.util")
+
 local M = {}
 
 -- Creates a Shell formatter.
@@ -27,6 +29,17 @@ M.black = M.shell({ cmd = { "black", "--stdin-filename", "%", "--quiet", "-" } }
 M.shfmt = M.shell({ cmd = { "shfmt", "-i", "2", "-bn", "-ci", "-sr" } })
 M.stylua =
   M.shell({ cmd = { "stylua", "--search-parent-directories", "--stdin-filepath", "%", "-" } })
+M.eslint_d_fix =
+  M.shell({ cmd = { "eslint_d", "--fix-to-stdout", "--stdin", "--stdin-filename", "%" } })
+
+-- Only runs if it can find an .eslintrc.* file
+M.lazy_eslint_d_fix = function()
+  local eslintrc = util.findglob(".eslintrc.*", vim.fn.expand("%:p:h"))
+  util.debug("eslint_d_fix", { eslintrc = eslintrc })
+  if eslintrc ~= nil then
+    return M.eslint_d_fix
+  end
+end
 
 M.remove_trailing_whitespace = M.custom({
   format = function(lines)
