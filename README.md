@@ -167,6 +167,16 @@ format_on_save.setup({
       }),
       formatters.shell({ cmd = { "gofmt" } }),
     },
+
+    -- Add conditional formatter that only runs if a certain file exists
+    -- in one of the parent directories.
+    javascript = {
+      formatters.if_file_exists(".eslintrc.*", formatters.eslint_d_fix),
+      formatters.if_file_exists(
+        { ".prettierrc", ".prettierrc.*", "prettier.config.*" },
+        formatters.prettierd
+      )
+    },
   },
 
   -- Optional: fallback formatter to use when no formatters match the current filetype

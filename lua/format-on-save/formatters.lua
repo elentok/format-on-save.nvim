@@ -24,6 +24,26 @@ function M.custom(opts)
   return vim.tbl_extend("force", { mode = "custom" }, opts or {})
 end
 
+-- Creates a Lazy formatter that returns a set of non-lazy formatters if
+-- one of the given files (globs are supported) exists in the one of the parent
+-- directories.
+---@param glob_pattern string|string[]
+---@param formatter NonLazyFormatter|NonLazyFormatter[]
+---@return LazyFormatter
+function M.if_file_exists(glob_pattern, formatter)
+  return function()
+    if type(glob_pattern) == "string" then
+      glob_pattern = { glob_pattern }
+    end
+
+    if util.findglob(glob_pattern, vim.fn.expand("%:p:h")) then
+      return formatter
+    end
+
+    return nil
+  end
+end
+
 M.prettierd = M.shell({ cmd = { "prettierd", "%" } })
 M.black = M.shell({ cmd = { "black", "--stdin-filename", "%", "--quiet", "-" } })
 M.ruff = M.shell({ cmd = { "ruff", "check", "--stdin-filename", "%", "--fix-only", "-" } })
@@ -34,13 +54,7 @@ M.eslint_d_fix =
   M.shell({ cmd = { "eslint_d", "--fix-to-stdout", "--stdin", "--stdin-filename", "%" } })
 
 -- Only runs if it can find an .eslintrc.* file
-M.lazy_eslint_d_fix = function()
-  local eslintrc = util.findglob(".eslintrc.*", vim.fn.expand("%:p:h"))
-  util.debug("eslint_d_fix", { eslintrc = eslintrc })
-  if eslintrc ~= nil then
-    return M.eslint_d_fix
-  end
-end
+M.lazy_eslint_d_fix = M.if_file_exists(".eslintrc.*", M.eslint_d_fix)
 
 M.remove_trailing_whitespace = M.custom({
   format = function(lines)
