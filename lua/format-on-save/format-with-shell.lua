@@ -30,7 +30,12 @@ local function expand_and_concat_cmd(opts, tempfile)
     filename = vim.fn.expand("%")
   end
 
-  local cmd = vim.list_extend({}, opts.cmd)
+  local cmd = opts.cmd
+  if type(cmd) == "function" then
+    cmd = cmd()
+  else
+    cmd = vim.list_extend({}, cmd)
+  end
 
   if opts.expand_executable then
     local cmd_fullpath = vim.fn.exepath(cmd[1])

@@ -55,5 +55,17 @@ describe("format", function()
 
       assert.is.same("filename=test-tempfile", vim.fn.getline(1))
     end)
+
+    it("accepts a function as the 'cmd' argument", function()
+      vim.cmd("new")
+      vim.fn.setline(1, "filename={filename}")
+      format(formatters.shell({
+        cmd = function()
+          return { "./tests/dummy-formatter.sh", "replace-filename", "BOB" }
+        end,
+      }))
+
+      assert.is.same("filename=BOB", vim.fn.getline(1))
+    end)
   end)
 end)

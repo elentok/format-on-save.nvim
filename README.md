@@ -66,6 +66,7 @@ There are currently 3 types of formatters:
   - The first item in the `cmd` array will be expanded by default using the `vim.fn.exepath`
     function in order to detect mason binaries. To opt-out set the `expand_executable`
     field to `false`.
+  - The `cmd` argument can also be a function that is evaluated each time we format.
 - **CustomFormatter** - passes the lines of the current buffer through a
   function that modifies them and then updates the contents.
 - **LazyFormatter** - a function that is called lazily every time we format the
