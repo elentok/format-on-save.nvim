@@ -153,6 +153,7 @@ format_on_save.setup({
       formatters.remove_trailing_whitespace,
       formatters.shell({ cmd = "tidy-imports" }),
       formatters.black,
+      formatters.ruff,
     },
 
     -- Use a tempfile instead of stdin

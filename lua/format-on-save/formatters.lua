@@ -26,6 +26,7 @@ end
 
 M.prettierd = M.shell({ cmd = { "prettierd", "%" } })
 M.black = M.shell({ cmd = { "black", "--stdin-filename", "%", "--quiet", "-" } })
+M.ruff = M.shell({ cmd = { "ruff", "check", "--stdin-filename", "%", "--fix-only", "-" } })
 M.shfmt = M.shell({ cmd = { "shfmt", "-i", "2", "-bn", "-ci", "-sr" } })
 M.stylua =
   M.shell({ cmd = { "stylua", "--search-parent-directories", "--stdin-filepath", "%", "-" } })
