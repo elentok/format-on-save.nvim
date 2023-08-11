@@ -98,7 +98,7 @@ local function update_buffer(original_lines, formatted_lines)
   end
 end
 
----@params lines string[]
+---@param lines string[]
 ---@return string[]
 local function clean_ascii_colors(lines)
   return vim.tbl_map(function(line)

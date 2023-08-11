@@ -10,9 +10,50 @@ local test_formatter = formatters.custom({
 })
 
 describe("format", function()
-  vim.cmd("new")
-  vim.fn.setline(1, "hello {name}")
-  format(test_formatter)
+  describe("custom formatter", function()
+    it("formats the buffer", function()
+      vim.cmd("new")
+      vim.fn.setline(1, "hello {name}")
+      format(test_formatter)
 
-  assert.is.same("hello bob", vim.fn.getline(1))
+      assert.is.same("hello bob", vim.fn.getline(1))
+    end)
+  end)
+
+  describe("shell formatter", function()
+    it("formats the buffer", function()
+      vim.cmd("new")
+      vim.fn.setline(1, "hello {name}")
+      format(formatters.shell({
+        cmd = { "./tests/dummy-formatter.sh", "replace-name" },
+      }))
+
+      assert.is.same("hello joe", vim.fn.getline(1))
+    end)
+
+    it("expands % to the filename", function()
+      vim.cmd("new")
+      vim.cmd("file myfile")
+      vim.fn.setline(1, "filename={filename}")
+      format(formatters.shell({
+        cmd = { "./tests/dummy-formatter.sh", "replace-filename", "%" },
+      }))
+
+      assert.is.same("filename=myfile", vim.fn.getline(1))
+    end)
+
+    it("supports formatters that don't support stdin", function()
+      vim.cmd("new")
+      vim.cmd("file mytempfile")
+      vim.fn.setline(1, "filename={tempfile}")
+      format(formatters.shell({
+        cmd = { "./tests/dummy-formatter.sh", "format-tempfile", "%" },
+        tempfile = function()
+          return "test-tempfile"
+        end,
+      }))
+
+      assert.is.same("filename=test-tempfile", vim.fn.getline(1))
+    end)
+  end)
 end)
