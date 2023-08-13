@@ -15,49 +15,6 @@ function M.is_path_excluded(filepath)
   return false
 end
 
----@param path string
----@param patterns string|string[]
----@return string
-local function multiglob(path, patterns)
-  if type(patterns) == "string" then
-    patterns = { patterns }
-  end
-
-  for _, pattern in ipairs(patterns) do
-    M.debug("multiglob", { path = path, pattern = pattern })
-    local result = vim.fn.glob(path .. "/" .. pattern)
-    M.debug("multiglob", { pattern = pattern, result = result })
-    if #result ~= 0 then
-      return result
-    end
-  end
-
-  return ""
-end
-
--- Searches for a glob pattern from a given path up to the root
--- (like findfile() but with globs)
---
--- Example: findglob(".eslintrc.*", expand("%:p:h"))
---
----@param pattern string|string[]
----@param start_path string
----@return string|nil
-function M.findglob(pattern, start_path)
-  local result = ""
-  local path = start_path
-  while #result == 0 and path ~= "/" do
-    result = multiglob(path, pattern)
-    if #result ~= 0 then
-      return result
-    end
-
-    path = vim.fn.fnamemodify(path, ":h")
-  end
-
-  return nil
-end
-
 --- Prints debug output
 -- Based on https://github.com/nanotee/nvim-lua-guide
 function M.debug(...)
