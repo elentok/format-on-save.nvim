@@ -171,11 +171,23 @@ format_on_save.setup({
     -- Add conditional formatter that only runs if a certain file exists
     -- in one of the parent directories.
     javascript = {
-      formatters.if_file_exists(".eslintrc.*", formatters.eslint_d_fix),
-      formatters.if_file_exists(
-        { ".prettierrc", ".prettierrc.*", "prettier.config.*" },
-        formatters.prettierd
-      )
+      formatters.if_file_exists({
+        pattern = ".eslintrc.*",
+        formatter = formatters.eslint_d_fix)
+      }),
+      formatters.if_file_exists({
+        pattern = { ".prettierrc", ".prettierrc.*", "prettier.config.*" },
+        formatter = formatters.prettierd,
+      }),
+      -- By default it stops at the git repo root (or "/" if git repo not found)
+      -- but it can be customized with the `stop_path` option:
+      formatters.if_file_exists({
+        pattern = ".prettierrc",
+        formatter = formatters.prettierd,
+        stop_path = function()
+          return "/my/custom/stop/path"
+        end
+      }),
     },
   },
 

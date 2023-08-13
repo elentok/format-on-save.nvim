@@ -1,4 +1,5 @@
-local util = require("format-on-save.util")
+local root_finders = require("format-on-save.root-finders")
+local if_file_exists = require("format-on-save.formatters.if-file-exists")
 
 local M = {}
 
@@ -27,21 +28,24 @@ end
 -- Creates a Lazy formatter that returns a set of non-lazy formatters if
 -- one of the given files (globs are supported) exists in the one of the parent
 -- directories.
----@param glob_pattern string|string[]
----@param formatter NonLazyFormatter|NonLazyFormatter[]
+---@param opts IfFileExistsOptions|string|string[]
+---@param formatter_deprecated? NonLazyFormatter|NonLazyFormatter[] depercated
 ---@return LazyFormatter
-function M.if_file_exists(glob_pattern, formatter)
-  return function()
-    if type(glob_pattern) == "string" then
-      glob_pattern = { glob_pattern }
-    end
+function M.if_file_exists(opts, formatter_deprecated)
+  -- TODO: remove this after there's no need to support the deprecated version
+  if type(opts) == "string" or (type(opts) == "table" and vim.tbl_islist(opts)) then
+    vim.notify(
+      "DEPRECATED: formatters.if_file_exists should be called with an options object, e.g. { pattern: '.eslintrc.*', formatter: formatters.eslint_d }",
+      vim.log.levels.WARN
+    )
 
-    if util.findglob(glob_pattern, vim.fn.expand("%:p:h")) then
-      return formatter
-    end
-
-    return nil
+    return if_file_exists({
+      pattern = opts,
+      formatter = formatter_deprecated,
+    })
   end
+
+  return if_file_exists(opts)
 end
 
 M.prettierd = M.shell({ cmd = { "prettierd", "%" } })
@@ -54,7 +58,11 @@ M.eslint_d_fix =
   M.shell({ cmd = { "eslint_d", "--fix-to-stdout", "--stdin", "--stdin-filename", "%" } })
 
 -- Only runs if it can find an .eslintrc.* file
-M.lazy_eslint_d_fix = M.if_file_exists(".eslintrc.*", M.eslint_d_fix)
+M.lazy_eslint_d_fix = M.if_file_exists({
+  pattern = ".eslintrc.*",
+  formatter = M.eslint_d_fix,
+  stop_path = root_finders.git,
+})
 
 M.remove_trailing_whitespace = M.custom({
   format = function(lines)
