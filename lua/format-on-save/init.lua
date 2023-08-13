@@ -72,6 +72,12 @@ function M.setup(opts)
     end, {})
     vim.api.nvim_create_user_command("FormatOn", M.enable, {})
     vim.api.nvim_create_user_command("FormatOff", M.disable, {})
+    vim.api.nvim_create_user_command("FormatDebugOn", function()
+      config.debug = true
+    end, {})
+    vim.api.nvim_create_user_command("FormatDebugOff", function()
+      config.debug = false
+    end, {})
   end
 end
 
