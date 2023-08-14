@@ -15,7 +15,7 @@ local M = {
 ---@field user_commands? boolean Add Format, FormatOn and FormatOff auto commands (defaults to true)
 ---@field debug? boolean Enable extra logs for debugging (defaults to false)
 ---@field stderr_loglevel? integer The log level when a formatter was successful but included stderr output (from |vim.log.levels|, defaults to WARN)
----@field partial_update? boolean Experimental feature of only updating modified lines
+---@field partial_update? boolean|'diff' Experimental feature of only updating modified lines
 ---@field run_with_sh? boolean Prefix all shell commands with "sh -c" (default: true)
 ---@field error_notifier? ErrorNotifier How to display error messages (default: vim.notify() via require('format-on-save.notifiers.vim'))
 
@@ -59,10 +59,13 @@ function M.setup(opts)
       end,
       group = augroup_id,
     })
-    vim.api.nvim_create_autocmd(
-      { "BufWritePost" },
-      { pattern = "*", callback = cursors.restore_current_buf_cursors, group = augroup_id }
-    )
+
+    if opts.partial_update ~= "diff" then
+      vim.api.nvim_create_autocmd(
+        { "BufWritePost" },
+        { pattern = "*", callback = cursors.restore_current_buf_cursors, group = augroup_id }
+      )
+    end
   end
 
   -- Register user commands
