@@ -15,6 +15,17 @@ local function update_buffer_with_diff(original_lines, formatted_lines)
     local hunk = hunks[hunk_index]
     local original_start, original_count, formatted_start, formatted_count = unpack(hunk)
 
+    -- `vim.diff` returns indices of a unified diff hunks and 0 there is
+    -- considered special in that it means that hunk actuall starts on the next
+    -- line, so we take that into account here.
+    --
+    -- References:
+    --   https://www.artima.com/weblogs/viewpost.jsp?thread=164293
+    --   https://www.gnu.org/software/diffutils/manual/html_node/Detailed-Unified.html
+    if original_count == 0 then
+      original_start = original_start + 1
+    end
+
     local formatted_hunk_lines = {}
     for line = formatted_start, formatted_start + formatted_count - 1 do
       table.insert(formatted_hunk_lines, formatted_lines[line])
