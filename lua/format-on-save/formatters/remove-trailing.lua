@@ -8,4 +8,20 @@ local whitespace = create.custom({
   end,
 })
 
-return { whitespace = whitespace }
+local newlines = create.custom({
+  format = function(lines)
+    local count_newlines = 0
+    for i = #lines - 1, 0, -1 do
+      local line = lines[i]
+      if line == "" then
+        count_newlines = count_newlines + 1
+      else
+        break
+      end
+    end
+
+    return vim.list_slice(lines, 0, #lines - count_newlines - 1)
+  end,
+})
+
+return { whitespace = whitespace, newlines = newlines }

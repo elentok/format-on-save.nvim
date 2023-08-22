@@ -8,6 +8,7 @@ local M = {
   lsp = create.lsp,
   custom = create.custom,
   remove_trailing_whitespace = remove_trailing.whitespace,
+  remove_trailing_newlines = remove_trailing.newlines,
 }
 
 -- Creates a Lazy formatter that returns a set of non-lazy formatters if
