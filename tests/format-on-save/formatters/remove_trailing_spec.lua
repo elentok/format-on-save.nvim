@@ -12,11 +12,28 @@ describe("remove_trailing.whitespace", function()
 end)
 
 describe("remove_trailing.newlines", function()
-  it("removes trailing newlines", function()
+  it("removes nothing when there are no trailing newlines", function()
+    local formatted = remove_trailing.newlines.format({
+      "hello",
+      "world",
+    })
+    assert.is.same({ "hello", "world" }, formatted)
+  end)
+
+  it("removes trailing newlines (two lines)", function()
     local formatted = remove_trailing.newlines.format({
       "hello",
       "world",
       "",
+      "",
+    })
+    assert.is.same({ "hello", "world" }, formatted)
+  end)
+
+  it("removes trailing newlines (one line)", function()
+    local formatted = remove_trailing.newlines.format({
+      "hello",
+      "world",
       "",
     })
     assert.is.same({ "hello", "world" }, formatted)

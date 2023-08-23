@@ -11,7 +11,7 @@ local whitespace = create.custom({
 local newlines = create.custom({
   format = function(lines)
     local count_newlines = 0
-    for i = #lines - 1, 0, -1 do
+    for i = #lines, 1, -1 do
       local line = lines[i]
       if line == "" then
         count_newlines = count_newlines + 1
@@ -20,7 +20,7 @@ local newlines = create.custom({
       end
     end
 
-    return vim.list_slice(lines, 0, #lines - count_newlines - 1)
+    return vim.list_slice(lines, 0, #lines - count_newlines)
   end,
 })
 
