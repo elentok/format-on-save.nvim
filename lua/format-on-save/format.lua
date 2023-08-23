@@ -5,6 +5,41 @@ local format_with_custom = require("format-on-save.format-with-custom")
 local format_with_lsp = require("format-on-save.format-with-lsp")
 local format_with_shell = require("format-on-save.format-with-shell")
 
+-- Runs formatters recursively
+---@param formatter? Formatter|Formatter[]
+local function run_formatters(formatter)
+  if formatter == nil then
+    return
+  end
+
+  -- Lazy formatter
+  if type(formatter) == "function" then
+    run_formatters(formatter())
+    return
+  end
+
+  -- Multiple formatters
+  if vim.tbl_islist(formatter) then
+    for _, single_formatter in ipairs(formatter) do
+      run_formatters(single_formatter)
+    end
+    return
+  end
+
+  if formatter.mode == "lsp" then
+    format_with_lsp(formatter.client_name)
+  elseif formatter.mode == "shell" then
+    format_with_shell(formatter --[[@as ShellFormatter]])
+  elseif formatter.mode == "custom" then
+    format_with_custom(formatter --[[@as CustomFormatter]])
+  else
+    vim.notify(
+      string.format("Error: invalid formatter %s", vim.inspect(formatter)),
+      vim.log.levels.ERROR
+    )
+  end
+end
+
 -- Formats the current buffer synchronously.
 ---@param formatter? Formatter
 local function format(formatter)
@@ -30,39 +65,41 @@ local function format(formatter)
     formatter = config.fallback_formatter
   end
 
+  run_formatters(formatter)
+
   -- Lazy formatter
-  if type(formatter) == "function" then
-    formatter = formatter()
-  end
+  -- if type(formatter) == "function" then
+  --   formatter = formatter()
+  -- end
 
-  if formatter == nil then
-    return
-  end
+  -- if formatter == nil then
+  --   return
+  -- end
 
-  ---@type Formatter[]
-  local formatters
-  if vim.tbl_islist(formatter) then
-    formatters = formatter
-  else
-    formatters = { formatter }
-  end
+  -- ---@type Formatter[]
+  -- local formatters
+  -- if vim.tbl_islist(formatter) then
+  --   formatters = formatter
+  -- else
+  --   formatters = { formatter }
+  -- end
 
-  for _, single_formatter in ipairs(formatters) do
-    if single_formatter ~= nil then
-      if single_formatter.mode == "lsp" then
-        format_with_lsp(single_formatter.client_name)
-      elseif single_formatter.mode == "shell" then
-        format_with_shell(single_formatter --[[@as ShellFormatter]])
-      elseif single_formatter.mode == "custom" then
-        format_with_custom(single_formatter --[[@as CustomFormatter]])
-      else
-        vim.notify(
-          string.format("Error: invalid formatter %s", vim.inspect(single_formatter)),
-          vim.log.levels.ERROR
-        )
-      end
-    end
-  end
+  -- for _, single_formatter in ipairs(formatters) do
+  --   if single_formatter ~= nil then
+  --     if single_formatter.mode == "lsp" then
+  --       format_with_lsp(single_formatter.client_name)
+  --     elseif single_formatter.mode == "shell" then
+  --       format_with_shell(single_formatter --[[@as ShellFormatter]])
+  --     elseif single_formatter.mode == "custom" then
+  --       format_with_custom(single_formatter --[[@as CustomFormatter]])
+  --     else
+  --       vim.notify(
+  --         string.format("Error: invalid formatter %s", vim.inspect(single_formatter)),
+  --         vim.log.levels.ERROR
+  --       )
+  --     end
+  --   end
+  -- end
 end
 
 return format

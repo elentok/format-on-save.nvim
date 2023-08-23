@@ -46,6 +46,7 @@ local config = {
   partial_update = false,
   run_with_sh = true,
   error_notifier = vim_notify,
+  fallback_formatter = nil,
 }
 
 return config
