@@ -72,19 +72,27 @@ There are currently 3 types of formatters:
 - **LazyFormatter** - a function that is called lazily every time we format the
   file, this allows using a different formatter for different files.
 
-## Partial update
+## Experimental features
 
-When updating all of the lines in a buffer all of the extmarks get removed. In
-an attempt to avoid that I added an experimental flag `partial_update` that only
-updates lines that have changed (it's currently using a very simple algorithm,
-compares each line by index, no advance diffing, I might look into that in the
-future).
+### Partial update
 
-You can enable it like this:
+When updating all of the lines in a buffer all of the extmarks get removed. This
+plugin currently includes two experimental methods to only partially update the
+buffer:
+
+1. `experiments.partial_update = 'line-by-line'` - a very simple algorithm that
+   goes line-by-line and compares them, only updates modified lines.
+1. `experiments.partial_update = 'diff'` - an awesome upgrade added by @faergeek
+   that uses `vim.diff` to compare the old and new buffer lines and only update
+   the modified hunks.
+
+You can enable either of them like this:
 
 ```lua
 require('format-on-save').setup({
-  partial_update = true,
+  experiments = {
+    partial_update = 'diff', -- or 'line-by-line'
+  }
 })
 ```
 

@@ -1,15 +1,15 @@
 local config = require("format-on-save.config")
 local update_buffer = require("format-on-save.update-buffer")
 
-local original_partial_update = config.partial_update
+local original_partial_update = config.experiments.partial_update
 
 describe('update-buffer with partial_update == "diff"', function()
   before_each(function()
-    config.partial_update = "diff"
+    config.experiments.partial_update = "diff"
   end)
 
   after_each(function()
-    config.partial_update = original_partial_update
+    config.experiments.partial_update = original_partial_update
   end)
 
   it("properly handles empty hunk in a unified diff", function()

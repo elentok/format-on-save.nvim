@@ -25,6 +25,10 @@ local vim_notify = require("format-on-save.error-notifiers.vim-notify")
 
 ---@alias Formatter LazyFormatter | NonLazyFormatter
 
+---@class Experiments
+---@field partial_update false | 'line-by-line' | 'diff'
+---@field disable_restore_cursors? boolean
+
 ---@class Config
 ---@field exclude_path_patterns string[] Paths where format-on-save is disabled
 ---@field formatter_by_ft { [string]: Formatter|Formatter[] }
@@ -32,9 +36,9 @@ local vim_notify = require("format-on-save.error-notifiers.vim-notify")
 ---@field enabled boolean
 ---@field debug boolean Enable extra logs for debugging (defaults to false, can also be set by setting FORMAT_ON_SAVE_DEBUG=true)
 ---@field stderr_loglevel integer The log level when a formatter was successful but included stderr output (from |vim.log.levels|, defaults to WARN)
----@field partial_update boolean|'diff' Experimental feature of only updating modified lines
 ---@field run_with_sh boolean Prefix all shell commands with "sh -c" (default: true)
 ---@field error_notifier ErrorNotifier How to display error messages (default: vim.notify() via require('format-on-save.notifiers.vim'))
+---@field experiments Experiments Experiment flags
 
 ---@type Config
 local config = {
@@ -43,10 +47,12 @@ local config = {
   enabled = true,
   debug = (vim.env.FORMAT_ON_SAVE_DEBUG == "true"),
   stderr_loglevel = vim.log.levels.WARN,
-  partial_update = false,
   run_with_sh = true,
   error_notifier = vim_notify,
   fallback_formatter = nil,
+  experiments = {
+    partial_update = false,
+  },
 }
 
 return config

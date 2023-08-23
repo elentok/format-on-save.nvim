@@ -57,9 +57,9 @@ end
 ---@param original_lines string[]
 ---@param formatted_lines string[]
 local function update_buffer(original_lines, formatted_lines)
-  if config.partial_update == "diff" then
+  if config.experiments.partial_update == "diff" then
     update_buffer_with_diff(original_lines, formatted_lines)
-  elseif config.partial_update == true then
+  elseif config.experiments.partial_update == "line-by-line" then
     update_buffer_line_by_line(original_lines, formatted_lines)
   else
     vim.api.nvim_buf_set_lines(0, 0, -1, false, formatted_lines)
