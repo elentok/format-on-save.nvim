@@ -82,7 +82,13 @@ local function register_auto_commands()
   if config.experiments.disable_restore_cursors ~= true then
     vim.api.nvim_create_autocmd({ "BufWritePost" }, {
       pattern = "*",
-      callback = cursors.restore_current_buf_cursors,
+      callback = function()
+        -- If we try to restore without the timer it still scrolls to the top,
+        -- I hope I can solve that somehow and avoid this but for now it works.
+        vim.fn.timer_start(0, function()
+          cursors.restore_current_buf_cursors()
+        end)
+      end,
       group = augroup_id,
     })
   end
