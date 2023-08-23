@@ -27,7 +27,7 @@ local vim_notify = require("format-on-save.error-notifiers.vim-notify")
 
 ---@class Experiments
 ---@field partial_update false | 'line-by-line' | 'diff'
----@field disable_restore_cursors? boolean
+---@field disable_restore_cursors boolean
 
 ---@class Config
 ---@field exclude_path_patterns string[] Paths where format-on-save is disabled
@@ -52,6 +52,7 @@ local config = {
   fallback_formatter = nil,
   experiments = {
     partial_update = false,
+    disable_restore_cursors = false,
   },
 }
 

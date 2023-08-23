@@ -54,6 +54,7 @@ local function merge_config(opts)
     if opts.experiments.partial_update == nil then
       if opts.partial_update == "diff" then
         opts.experiments.partial_update = "diff"
+        opts.experiments.disable_restore_cursors = true
       elseif opts.partial_update == true then
         opts.experiments.partial_update = "line-by-line"
       end
@@ -61,7 +62,7 @@ local function merge_config(opts)
   end
 
   if opts.experiments ~= nil then
-    vim.tbl_extend("force", config.experiments, opts.experiments)
+    config.experiments = vim.tbl_extend("force", config.experiments, opts.experiments)
   end
 
   if opts.debug ~= nil then
