@@ -2,6 +2,17 @@ local config = require("format-on-save.config")
 
 local M = {}
 
+---@generic T
+---@param list T[]
+---@return T[]
+function M.list_reverse(list)
+  local result = {}
+  for i = #list, 1, -1 do
+    result[#result + 1] = list[i]
+  end
+  return result
+end
+
 ---@param filepath string
 ---@return boolean
 function M.is_path_excluded(filepath)
