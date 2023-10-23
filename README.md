@@ -17,7 +17,7 @@ I tried several plugins but:
 
 - Neither supported both LSP and non-LSP formatters
 - Some of them format asynchronously which is tricky because you need to lock
-  the buffer before formatting and there are a lot of end cases.
+  the buffer before formatting and there are a lot of edge cases.
 - Some of them support partial formatting which adds a lot of complexity.
 
 This plugin has a few core principles to keep it simple:
