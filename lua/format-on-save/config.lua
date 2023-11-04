@@ -1,4 +1,4 @@
-local vim_notify = require("format-on-save.error-notifiers.vim-notify")
+local message_buffer = require("format-on-save.error-notifiers.message-buffer")
 
 ---@class ShellFormatterOptions
 ---@field cmd string[]|fun():string[]
@@ -49,7 +49,7 @@ local config = {
   debug = (vim.env.FORMAT_ON_SAVE_DEBUG == "true"),
   stderr_loglevel = vim.log.levels.WARN,
   run_with_sh = true,
-  error_notifier = vim_notify,
+  error_notifier = message_buffer,
   fallback_formatter = nil,
   experiments = {
     partial_update = false,

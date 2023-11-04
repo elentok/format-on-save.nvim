@@ -214,15 +214,16 @@ format_on_save.setup({
 
 ### Error messages
 
-By default the plugin uses `vim.notify()` to show error messages, you can
-customize it by setting the `error_notifier` configuration flag:
+By default the plugin uses another buffer to show error messages, you can
+customize it by setting the `error_notifier` configuration flag, e.g. to use
+`vim.notify()`:
 
 ```lua
 local format_on_save = require("format-on-save")
-local message_buffer = require("format-on-save.error-notifiers.message-buffer")
+local vim_notify = require("format-on-save.error-notifiers.vim-notify")
 
 format_on_save.setup({
-  error_notifier = message_buffer,
+  error_notifier = vim_notify,
 })
 ```
 
