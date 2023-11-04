@@ -5,6 +5,7 @@ local cursors = require("format-on-save.cursors")
 ---@class ExperimentOptions
 ---@field partial_update? false | 'line-by-line' | 'diff'
 ---@field disable_restore_cursors? boolean
+---@field adjust_cursor_position? boolean
 
 ---@class SetupOptions
 ---@field exclude_path_patterns? string[] Paths where format-on-save is disabled
