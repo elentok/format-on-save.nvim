@@ -46,6 +46,7 @@ local function expand_and_concat_cmd(opts, tempfile)
       )
       return nil
     end
+    util.debug(string.format("Expanded executable from '%s' to '%s'", cmd[1], cmd_fullpath))
     cmd[1] = cmd_fullpath
   end
 
@@ -86,6 +87,8 @@ local function format_with_shell(opts)
     return
   end
 
+  util.debug("Command:", cmd)
+
   local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
 
   if tempfile ~= nil then
@@ -103,6 +106,8 @@ local function format_with_shell(opts)
     return
   end
 
+  util.debug("Command exited successfully")
+
   config.error_notifier.hide()
 
   if #result.stderr > 0 and config.stderr_loglevel ~= vim.log.levels.OFF then
@@ -116,11 +121,15 @@ local function format_with_shell(opts)
 
   local formatted_lines = result.stdout
   if tempfile ~= nil then
+    util.debug("Removing temp file", tempfile)
     formatted_lines = vim.fn.readfile(tempfile)
     os.remove(tempfile)
+    util.debug("Done removing temp file")
   end
 
+  util.debug(string.format("Updating buffer from %d to %d lines", #lines, #formatted_lines))
   update_buffer(lines, formatted_lines)
+  util.debug("Done updating buffer")
 end
 
 return format_with_shell
