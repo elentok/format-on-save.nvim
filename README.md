@@ -181,7 +181,7 @@ format_on_save.setup({
     javascript = {
       formatters.if_file_exists({
         pattern = ".eslintrc.*",
-        formatter = formatters.eslint_d_fix)
+        formatter = formatters.eslint_d_fix
       }),
       formatters.if_file_exists({
         pattern = { ".prettierrc", ".prettierrc.*", "prettier.config.*" },
