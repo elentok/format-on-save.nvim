@@ -211,5 +211,21 @@ describe(
 
       assert.are.same({ 1, 18 }, vim.api.nvim_win_get_cursor(0))
     end)
+
+    it("properly handles multibyte characters", function()
+      local original_lines = {
+        "print '…'",
+      }
+
+      local formatted_lines = {
+        'print "…"',
+      }
+
+      vim.cmd("new")
+      vim.api.nvim_buf_set_lines(0, 0, -1, false, original_lines)
+
+      update_buffer(original_lines, formatted_lines)
+      assert.are.same(formatted_lines, vim.api.nvim_buf_get_lines(0, 0, -1, false))
+    end)
   end
 )

@@ -2,7 +2,7 @@ local config = require("format-on-save.config")
 local refine_edits = require("format-on-save.refine-edits")
 local util = require("format-on-save.util")
 
-local NEWLINE_CHAR = vim.fn.char2nr("\n")
+local NEWLINE_CHAR = string.byte("\n")
 
 ---@class NormalizedHunk
 ---@field kind "add" | "del" | "sub"
@@ -116,7 +116,7 @@ local function convert_charwise_hunks_to_set_text_args(
   local start_col = 0
 
   local original_char_index = 1
-  local formatted_chars_str = table.concat(vim.tbl_map(vim.fn.nr2char, formatted_chars), "")
+  local formatted_chars_str = table.concat(vim.tbl_map(string.char, formatted_chars), "")
 
   ---@type NvimBufSetTextArgs[]
   local set_text_args = {}
@@ -187,12 +187,12 @@ local function update_buffer_with_charwise_diff(linewise_hunk, original_lines, f
       and charwise_hunk.add_count * charwise_hunk.del_count < 400
     then
       local original_hunk_chars = vim.tbl_map(
-        vim.fn.nr2char,
+        string.char,
         vim.list_slice(original_chars, charwise_hunk.del_start, charwise_hunk.del_end)
       )
 
       local formatted_hunk_chars = vim.tbl_map(
-        vim.fn.nr2char,
+        string.char,
         vim.list_slice(formatted_chars, charwise_hunk.add_start, charwise_hunk.add_end)
       )
 
