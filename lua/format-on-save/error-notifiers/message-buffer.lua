@@ -63,7 +63,9 @@ local message_buffer = {
 
   hide = function()
     if vim.t.message_bufnr then
-      vim.cmd("silent bd " .. vim.t.message_bufnr)
+      if vim.api.nvim_buf_is_valid(vim.t.message_bufnr) then
+        vim.cmd("silent bd " .. vim.t.message_bufnr)
+      end
       vim.t.message_bufnr = nil
     end
   end,
