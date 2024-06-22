@@ -212,29 +212,30 @@ local function update_buffer_with_charwise_diff(linewise_hunk, original_lines, f
   local set_text_args =
     convert_charwise_hunks_to_set_text_args(linewise_hunk, hunks, original_chars, formatted_chars)
 
-  -- TODO: Explicit cursor adjustments could be deleted once this PR gets
-  -- into a release
-  -- https://github.com/neovim/neovim/pull/24901
-  --
+  local current_buf = vim.api.nvim_get_current_buf()
+
   ---@class CursorPosition
   ---@field win number
   ---@field line integer
   ---@field column integer
 
-  local current_buf = vim.api.nvim_get_current_buf()
-
   ---@type CursorPosition[]
   local cursors = {}
-  for _, win in ipairs(vim.api.nvim_list_wins()) do
-    if vim.api.nvim_win_get_buf(win) == current_buf then
-      local line, column = unpack(vim.api.nvim_win_get_cursor(win))
 
-      if line >= linewise_hunk.del_start and line <= linewise_hunk.del_end then
-        cursors[#cursors + 1] = {
-          win = win,
-          line = line,
-          column = column,
-        }
+  local should_fix_cursor = not vim.fn.has("nvim-0.10")
+
+  if should_fix_cursor then
+    for _, win in ipairs(vim.api.nvim_list_wins()) do
+      if vim.api.nvim_win_get_buf(win) == current_buf then
+        local line, column = unpack(vim.api.nvim_win_get_cursor(win))
+
+        if line >= linewise_hunk.del_start and line <= linewise_hunk.del_end then
+          cursors[#cursors + 1] = {
+            win = win,
+            line = line,
+            column = column,
+          }
+        end
       end
     end
   end
@@ -259,61 +260,65 @@ local function update_buffer_with_charwise_diff(linewise_hunk, original_lines, f
     local new_row_count = #replacement
     local old_row_count = (end_row - start_row + 1)
 
-    for _, cursor in ipairs(cursors) do
-      if cursor.line >= start_row and cursor.line <= end_row then
-        local cursor_gravity_col = cursor.column + 1
+    if should_fix_cursor then
+      for _, cursor in ipairs(cursors) do
+        if cursor.line >= start_row and cursor.line <= end_row then
+          local cursor_gravity_col = cursor.column + 1
 
-        if cursor.line == end_row and cursor_gravity_col > end_col then
-          cursor.line = cursor.line + new_row_count - old_row_count
-          cursor.column = cursor.column + #replacement[new_row_count] - end_col
+          if cursor.line == end_row and cursor_gravity_col > end_col then
+            cursor.line = cursor.line + new_row_count - old_row_count
+            cursor.column = cursor.column + #replacement[new_row_count] - end_col
 
-          if new_row_count == 1 then
-            cursor.column = cursor.column + start_col
-          end
-        else
-          local repl_end_row = start_row + #replacement - 1
-          local cursor_was_after_end_row = cursor.line > repl_end_row
+            if new_row_count == 1 then
+              cursor.column = cursor.column + start_col
+            end
+          else
+            local repl_end_row = start_row + #replacement - 1
+            local cursor_was_after_end_row = cursor.line > repl_end_row
 
-          if cursor_was_after_end_row then
-            cursor.line = repl_end_row
-          end
+            if cursor_was_after_end_row then
+              cursor.line = repl_end_row
+            end
 
-          local repl_start_col = new_row_count == 1 and start_col or 0
-          local index = cursor.line - start_row + 1
-          local repl_item = replacement[index]
-          local repl_end_col = repl_start_col + #repl_item
+            local repl_start_col = new_row_count == 1 and start_col or 0
+            local index = cursor.line - start_row + 1
+            local repl_item = replacement[index]
+            local repl_end_col = repl_start_col + #repl_item
 
-          if
-            cursor_was_after_end_row
-            or (cursor.line == repl_end_row and cursor.column > repl_end_col)
-          then
-            cursor.column = repl_end_col
+            if
+              cursor_was_after_end_row
+              or (cursor.line == repl_end_row and cursor.column > repl_end_col)
+            then
+              cursor.column = repl_end_col
 
-            if cursor.column - 1 >= repl_start_col then
-              cursor.column = cursor.column - 1
+              if cursor.column - 1 >= repl_start_col then
+                cursor.column = cursor.column - 1
+              end
             end
           end
-        end
 
-        local last_valid_col = #(vim.fn.getline(cursor.line)) - 1
+          local last_valid_col = #(vim.fn.getline(cursor.line)) - 1
 
-        if last_valid_col < 0 then
-          last_valid_col = 0
-        end
+          if last_valid_col < 0 then
+            last_valid_col = 0
+          end
 
-        if cursor.column > last_valid_col then
-          cursor.column = last_valid_col
-        elseif cursor.column < 0 then
-          cursor.column = 0
+          if cursor.column > last_valid_col then
+            cursor.column = last_valid_col
+          elseif cursor.column < 0 then
+            cursor.column = 0
+          end
+        elseif cursor.line > end_row then
+          cursor.line = cursor.line + new_row_count - old_row_count
         end
-      elseif cursor.line > end_row then
-        cursor.line = cursor.line + new_row_count - old_row_count
       end
     end
   end
 
-  for _, cursor in ipairs(cursors) do
-    vim.api.nvim_win_set_cursor(cursor.win, { cursor.line, cursor.column })
+  if should_fix_cursor then
+    for _, cursor in ipairs(cursors) do
+      vim.api.nvim_win_set_cursor(cursor.win, { cursor.line, cursor.column })
+    end
   end
 end
 
