@@ -19,7 +19,7 @@ local function run_formatters(formatter)
   end
 
   -- Multiple formatters
-  if vim.tbl_islist(formatter) then
+  if vim.islist(formatter) then
     for _, single_formatter in ipairs(formatter) do
       run_formatters(single_formatter)
     end
@@ -78,7 +78,7 @@ local function format(formatter)
 
   -- ---@type Formatter[]
   -- local formatters
-  -- if vim.tbl_islist(formatter) then
+  -- if vim.islist(formatter) then
   --   formatters = formatter
   -- else
   --   formatters = { formatter }

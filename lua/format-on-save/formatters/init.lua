@@ -19,7 +19,7 @@ local M = {
 ---@return LazyFormatter
 function M.if_file_exists(opts, formatter_deprecated)
   -- TODO: remove this after there's no need to support the deprecated version
-  if type(opts) == "string" or (type(opts) == "table" and vim.tbl_islist(opts)) then
+  if type(opts) == "string" or (type(opts) == "table" and vim.islist(opts)) then
     vim.notify(
       "DEPRECATED: formatters.if_file_exists should be called with an options object, e.g. { pattern: '.eslintrc.*', formatter: formatters.eslint_d }",
       vim.log.levels.WARN

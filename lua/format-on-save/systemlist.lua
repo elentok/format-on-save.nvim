@@ -10,7 +10,7 @@ local config = require("format-on-save.config")
 ---@param input? string[]
 ---@return CommandResult
 local function systemlist(cmd, input)
-  if type(cmd) == "table" and vim.tbl_islist(cmd) then
+  if type(cmd) == "table" and vim.islist(cmd) then
     cmd = table.concat(cmd, " ")
   end
   local stderr_tempfile = vim.fn.tempname()
