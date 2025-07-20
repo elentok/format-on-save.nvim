@@ -1,5 +1,15 @@
 # format-on-save.nvim
 
+> [!IMPORTANT]
+>
+> This plugin is no longer maintained since I switched to
+> [conform.nvim](https://github.com/stevearc/conform.nvim).
+>
+> There were some bug that I didn't have the time to fix and conform.nvim just worked.
+>
+> If anyone wants to take over, feel free to fork it, let me know and I'd be
+> happy to add a notice here to point to the new project :)
+
 Automatically formats files when saving using either LSP or shell utilities like prettierd or shfmt.
 
 It also restores the cursor of any window showing the current file (useful when
